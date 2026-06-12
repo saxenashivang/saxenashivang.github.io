@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+  <meta name="description" content="A portfolio, but it's a video game." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
+</head>
+<body>
+  <!-- CRT scanlines overlay (toggled from HUD) -->
+  <div class="crt-overlay" aria-hidden="true"></div>
+
+  <!-- ============ TITLE SCREEN ============ -->
+  <div id="boot" class="boot">
+    <div class="boot-grid" aria-hidden="true"></div>
+    <p class="boot-studio">A <span id="boot-firstname"></span> PRODUCTION</p>
+    <h1 class="boot-logo" id="boot-logo"></h1>
+    <p class="boot-sub" id="boot-sub"></p>
+    <button class="press-start" id="press-start">▶ PRESS START</button>
+    <p class="boot-hint">or press any key · © <span id="boot-year"></span> · v2.0</p>
+  </div>
+
+  <!-- ============ GAME ============ -->
+  <div id="game" class="game hidden">
+    <!-- HUD -->
+    <header class="hud">
+      <div class="hud-left">
+        <span class="hud-hearts" id="hud-hearts" title="Health: excellent"></span>
+      </div>
+      <div class="hud-center">
+        <span class="hud-player" id="hud-player"></span>
+        <div class="xp-wrap" title="XP to next level">
+          <span class="hud-level" id="hud-level"></span>
+          <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+        </div>
+      </div>
+      <div class="hud-right">
+        <span class="hud-coins" title="Coins — click anywhere to earn">🪙 <b id="coin-count">0</b></span>
+        <button class="hud-btn" id="crt-toggle" title="Toggle CRT mode">CRT</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- PAUSE MENU NAV -->
+      <nav class="menu" id="menu" aria-label="Game menu">
+        <button class="menu-btn active" data-screen="stats"><i>01</i><span>CHARACTER</span></button>
+        <button class="menu-btn" data-screen="quests"><i>02</i><span>QUEST LOG</span></button>
+        <button class="menu-btn" data-screen="inventory"><i>03</i><span>INVENTORY</span></button>
+        <button class="menu-btn" data-screen="achievements"><i>04</i><span>TROPHIES</span></button>
+        <button class="menu-btn" data-screen="sidequests"><i>05</i><span>SIDE QUESTS</span></button>
+        <button class="menu-btn" data-screen="codex"><i>06</i><span>CODEX</span></button>
+        <button class="menu-btn" data-screen="tavern"><i>07</i><span>TAVERN</span></button>
+      </nav>
+
+      <!-- SCREENS -->
+      <main class="stage">
+        <!-- CHARACTER -->
+        <section class="screen active" id="screen-stats">
+          <h2 class="screen-title">CHARACTER</h2>
+          <div class="char-grid">
+            <div class="char-card panel">
+              <div class="char-avatar" id="char-avatar"></div>
+              <h3 class="char-name" id="char-name"></h3>
+              <p class="char-class">CLASS: <span id="typewriter"></span><span class="cursor">▌</span></p>
+              <div class="char-badges" id="char-badges"></div>
+            </div>
+            <div class="char-right">
+              <div class="panel bio-panel">
+                <h4 class="panel-label">// CHARACTER BIO</h4>
+                <div id="char-bio"></div>
+              </div>
+              <div class="panel stats-panel">
+                <h4 class="panel-label">// BASE STATS</h4>
+                <div id="stat-bars"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUEST LOG -->
+        <section class="screen" id="screen-quests">
+          <h2 class="screen-title">QUEST LOG</h2>
+          <p class="screen-sub">Main story missions · professional journey</p>
+          <div id="quest-list"></div>
+        </section>
+
+        <!-- INVENTORY -->
+        <section class="screen" id="screen-inventory">
+          <h2 class="screen-title">INVENTORY</h2>
+          <p class="screen-sub">Equipped skills &amp; tools · hover an item to inspect</p>
+          <div class="inv-tabs" id="inv-tabs"></div>
+          <div class="inv-grid" id="inv-grid"></div>
+        </section>
+
+        <!-- TROPHIES -->
+        <section class="screen" id="screen-achievements">
+          <h2 class="screen-title">TROPHIES</h2>
+          <p class="screen-sub">Education &amp; certifications unlocked</p>
+          <div class="trophy-grid" id="trophy-grid"></div>
+        </section>
+
+        <!-- SIDE QUESTS -->
+        <section class="screen" id="screen-sidequests">
+          <h2 class="screen-title">SIDE QUESTS</h2>
+          <p class="screen-sub">Optional missions · projects &amp; experiments</p>
+          <div class="side-grid" id="side-grid"></div>
+        </section>
+
+        <!-- CODEX -->
+        <section class="screen" id="screen-codex">
+          <h2 class="screen-title">CODEX</h2>
+          <p class="screen-sub">Lore entries discovered · the blog</p>
+          <div class="codex-list" id="codex-list"></div>
+        </section>
+
+        <!-- TAVERN -->
+        <section class="screen" id="screen-tavern">
+          <h2 class="screen-title">TAVERN</h2>
+          <p class="screen-sub">Recruit this player to your party</p>
+          <div class="tavern panel">
+            <p class="tavern-bubble">“Looking for a quest companion? My inbox is always open —
+              whether it's an opportunity, a question, or just to say hi.”</p>
+            <a href="" id="contact-btn" class="big-btn">⚔️ SEND PARTY INVITE</a>
+            <div class="tavern-socials" id="tavern-socials"></div>
+            <a href="" id="resume-btn" class="ghost-btn hidden" target="_blank" rel="noopener">📜 VIEW CHARACTER SHEET (RESUME)</a>
+          </div>
+          <p class="continue-joke">CONTINUE? <span id="continue-count">9</span>… (just kidding, take your time)</p>
+        </section>
+      </main>
+    </div>
+
+    <footer class="game-footer">
+      <span id="footer-note"></span>
+      <span class="footer-keys">⌨️ 1–7 switch screens · ↑↑↓↓←→←→BA …try it</span>
+    </footer>
+  </div>
+
+  <!-- Toasts -->
+  <div class="toast-zone" id="toast-zone" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
