@@ -19,6 +19,9 @@ const CONFIG = {
   ],
   location: "India",
   email: "shivang5198@gmail.com",
+  // Character avatar shown on the Character screen (path to an image).
+  // Leave blank to show your initials instead.
+  avatar: "assets/avatar.svg",
 
   // Short paragraph(s) for the About section
   about: [
@@ -33,7 +36,7 @@ const CONFIG = {
   // ---------- Social links (leave blank to hide) ----------
   socials: {
     github: "https://github.com/saxenashivang",
-    linkedin: "https://www.linkedin.com/in/saxenashivang",
+    linkedin: "https://www.linkedin.com/in/shivangsaxena",
     twitter: "",
     instagram: "",
   },

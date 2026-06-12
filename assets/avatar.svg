@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#241445"/>
+      <stop offset="0.55" stop-color="#1a1030"/>
+      <stop offset="1" stop-color="#2b0f2e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.6">
+      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="jacket" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c1c2c"/>
+      <stop offset="1" stop-color="#101019"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="240" height="240" fill="url(#bg)"/>
+  <rect width="240" height="240" fill="url(#glow)"/>
+  <!-- diagonal neon accents -->
+  <polygon points="240,0 240,54 178,0" fill="#00f0ff" opacity="0.16"/>
+  <polygon points="0,240 0,196 62,240" fill="#ff2e88" opacity="0.18"/>
+  <polygon points="240,62 240,74 196,30 204,24" fill="#ff2e88" opacity="0.22"/>
+  <polygon points="0,188 0,176 40,216 32,222" fill="#00f0ff" opacity="0.2"/>
+
+  <!-- neck -->
+  <rect x="104" y="146" width="32" height="32" rx="10" fill="#a36a3f"/>
+
+  <!-- jacket: bandhgala with mandarin collar -->
+  <path d="M34,240 C40,198 70,182 96,174 L120,186 L144,174 C170,182 200,198 206,240 Z" fill="url(#jacket)"/>
+  <!-- inner shirt -->
+  <path d="M104,177 L120,188 L136,177 L133,240 L107,240 Z" fill="#0b0b13"/>
+  <!-- mandarin collar -->
+  <path d="M97,171 C104,164 112,161 120,163 C128,161 136,164 143,171 L138,183 C126,174 114,174 102,183 Z" fill="#23233a"/>
+  <!-- jacket rim lights -->
+  <path d="M34,240 C40,198 70,182 96,174" fill="none" stroke="#00f0ff" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+  <path d="M206,240 C200,198 170,182 144,174" fill="none" stroke="#ff2e88" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+  <!-- gold buttons -->
+  <circle cx="120" cy="202" r="5" fill="#fbbf24" stroke="#7a5b10" stroke-width="1.5"/>
+  <circle cx="120" cy="222" r="5" fill="#fbbf24" stroke="#7a5b10" stroke-width="1.5"/>
+
+  <!-- ears -->
+  <ellipse cx="76" cy="116" rx="9" ry="13" fill="#b07343"/>
+  <ellipse cx="164" cy="116" rx="9" ry="13" fill="#b07343"/>
+
+  <!-- face -->
+  <ellipse cx="120" cy="110" rx="44" ry="52" fill="#bd7e4e"/>
+
+  <!-- beard: short, trimmed along the jaw -->
+  <path d="M78,114 C82,154 98,172 120,172 C142,172 158,154 162,114
+           C156,144 142,158 120,158 C98,158 84,144 78,114 Z" fill="#22222e"/>
+
+  <!-- smile -->
+  <path d="M99,146 Q120,170 141,146 Q120,158 99,146 Z" fill="#5b2e24"/>
+  <path d="M103,147 Q120,158 137,147 Q129,156 120,156 Q111,156 103,147 Z" fill="#ffffff"/>
+  <!-- mustache -->
+  <path d="M100,142 Q110,134 120,138 Q130,134 140,142 Q130,144 120,142 Q110,144 100,142 Z" fill="#22222e"/>
+
+  <!-- nose -->
+  <path d="M120,114 q5,12 -2,17" fill="none" stroke="#9c6238" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- eyes -->
+  <ellipse cx="101" cy="113" rx="7" ry="5.5" fill="#241409"/>
+  <ellipse cx="139" cy="113" rx="7" ry="5.5" fill="#241409"/>
+  <circle cx="103.5" cy="111" r="1.8" fill="#ffffff"/>
+  <circle cx="141.5" cy="111" r="1.8" fill="#ffffff"/>
+
+  <!-- eyebrows -->
+  <path d="M91,101 q11,-7 22,-3" fill="none" stroke="#1c1c25" stroke-width="5" stroke-linecap="round"/>
+  <path d="M127,98 q11,-4 22,3" fill="none" stroke="#1c1c25" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- hair: full, dark, swept -->
+  <path d="M78,108 C68,54 96,36 120,36 C148,36 172,56 162,108
+           C158,82 146,70 124,66 C102,62 86,78 82,108 Z" fill="#16161f"/>
+  <!-- hair quiff highlight -->
+  <path d="M92,52 C102,42 118,38 132,42" fill="none" stroke="#00f0ff" stroke-width="3" stroke-linecap="round" opacity="0.35"/>
+  <!-- sideburns: connect hairline to beard -->
+  <path d="M79,104 L90,104 L86,130 L80,122 Z" fill="#1b1b25"/>
+  <path d="M161,104 L150,104 L154,130 L160,122 Z" fill="#1b1b25"/>
+</svg>

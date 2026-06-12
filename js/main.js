@@ -121,8 +121,12 @@
   });
 
   // ---------- Character ----------
-  const initials = CONFIG.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
-  document.getElementById("char-avatar").textContent = initials;
+  const avatarEl = document.getElementById("char-avatar");
+  if (CONFIG.avatar) {
+    avatarEl.innerHTML = '<img src="' + esc(CONFIG.avatar) + '" alt="' + esc(CONFIG.name) + '" />';
+  } else {
+    avatarEl.textContent = CONFIG.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+  }
   document.getElementById("char-name").textContent = CONFIG.name;
 
   const badges = document.getElementById("char-badges");

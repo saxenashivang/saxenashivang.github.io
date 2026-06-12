@@ -391,6 +391,17 @@ body.godmode { animation: god 6s linear infinite; }
 
 .char-card:hover .char-avatar { animation-play-state: running; }
 
+.char-avatar img {
+  position: absolute;
+  inset: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  object-fit: cover;
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+}
+
+.char-avatar { position: relative; }
+
 @keyframes avatarSpin { to { filter: hue-rotate(360deg); } }
 
 .char-name { font-family: var(--font-logo); font-size: 1.3rem; text-transform: uppercase; }
