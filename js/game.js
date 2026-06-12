@@ -293,10 +293,16 @@
     const { x, ducking } = player;
     const y = player.y; // feet
     const run = state === "running" && y >= GROUND;
-    const phase = Math.floor(frames / 5) % 2;
+    // weekend = dance mode: groove, wave, shuffle
+    const party = DAYS[dayIdx].weekend && state === "running" && !ducking;
+    const phase = Math.floor(frames / (party ? 3 : 5)) % 2;
 
     ctx.save();
     ctx.translate(x, y);
+    if (party && y >= GROUND) {
+      ctx.translate(0, Math.sin(frames / 4) * 2.5); // bounce to the beat
+      ctx.rotate(Math.sin(frames / 9) * 0.08);      // hip sway
+    }
 
     // legs
     ctx.strokeStyle = "#0d0d15";
@@ -328,16 +334,45 @@
       ctx.fillStyle = COLORS.gold;
       ctx.fillRect(-1, -32, 2.5, 2.5);
       ctx.fillRect(-1, -26, 2.5, 2.5);
-      // arm swing
       ctx.strokeStyle = COLORS.jacket;
       ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.moveTo(0, -32);
-      ctx.lineTo(run && phase ? 9 : -9, -22);
-      ctx.stroke();
+      if (party) {
+        // both arms in the air like he just don't care
+        const wave = Math.sin(frames / 5) * 5;
+        ctx.beginPath();
+        ctx.moveTo(-6, -32); ctx.lineTo(-14, -46 + wave);
+        ctx.moveTo(6, -32); ctx.lineTo(14, -46 - wave);
+        ctx.stroke();
+        // hands, so the wave reads against the night sky
+        ctx.fillStyle = COLORS.skin;
+        ctx.beginPath();
+        ctx.arc(-14, -46 + wave, 3.2, 0, Math.PI * 2);
+        ctx.arc(14, -46 - wave, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // workday arm swing
+        ctx.beginPath();
+        ctx.moveTo(0, -32);
+        ctx.lineTo(run && phase ? 9 : -9, -22);
+        ctx.stroke();
+      }
       drawHead(0, -36);
     }
     ctx.restore();
+
+    // floating music notes while dancing
+    if (party) {
+      for (let i = 0; i < 2; i++) {
+        const t = (frames / 55 + i * 0.5) % 1;
+        ctx.save();
+        ctx.globalAlpha = (1 - t) * 0.9;
+        ctx.fillStyle = i ? COLORS.pink : COLORS.cyan;
+        ctx.font = "14px monospace";
+        ctx.textAlign = "center";
+        ctx.fillText(i ? "♪" : "♫", x + 22 + Math.sin((t + i) * 9) * 7, y - 58 - t * 32);
+        ctx.restore();
+      }
+    }
   }
 
   function drawHead(cx, feetY) {
