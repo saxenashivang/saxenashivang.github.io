@@ -256,6 +256,14 @@ const CONFIG = {
     enabled: true,
     posts: [
       {
+        slug: "agentic-rag-guide",
+        title: "The Complete Guide to Agentic RAG Engineering",
+        date: "2026-06-12",
+        summary: "From embeddings and hybrid retrieval to ReAct agents, HyDE, and RAGAS evaluation — everything I learned building a production RAG system over 10M+ documents.",
+        tags: ["rag", "llm", "ai-engineering", "agents"],
+        file: "posts/agentic-rag-guide.md",
+      },
+      {
         slug: "hello-world",
         title: "Hello, World — Why I Built This Site",
         date: "2026-06-12",
