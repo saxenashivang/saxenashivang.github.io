@@ -407,6 +407,11 @@
         }
       }
     },
+    // start a run immediately (used by the fullscreen CTA)
+    play() {
+      reset();
+      state = "running";
+    },
     // test/debug helpers
     state: () => state,
     score: () => score,

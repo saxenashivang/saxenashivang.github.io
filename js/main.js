@@ -100,6 +100,7 @@
   const menuBtns = Array.from(document.querySelectorAll(".menu-btn"));
   const screens = Array.from(document.querySelectorAll(".screen"));
   const visited = new Set(["stats"]);
+  let currentScreen = "stats";
   const SCREEN_NAMES = {
     quests: "Quest Log",
     inventory: "Inventory",
@@ -111,6 +112,7 @@
   };
 
   function showScreen(id) {
+    currentScreen = id;
     menuBtns.forEach((btn) => btn.classList.toggle("active", btn.dataset.screen === id));
     screens.forEach((screen) => screen.classList.toggle("active", screen.id === "screen-" + id));
     if (!visited.has(id) && SCREEN_NAMES[id]) {
@@ -124,8 +126,56 @@
 
   window.addEventListener("keydown", (e) => {
     if (!started || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!fsOverlay.classList.contains("hidden")) return; // arcade fullscreen owns the keyboard
     const num = parseInt(e.key, 10);
     if (num >= 1 && num <= menuBtns.length) showScreen(menuBtns[num - 1].dataset.screen);
+  });
+
+  // ---------- Arcade fullscreen ----------
+  const fsOverlay = document.getElementById("arcade-fs");
+  const fsStage = document.getElementById("arcade-fs-stage");
+  const runnerCanvas = document.getElementById("runner-canvas");
+  const arcadeWrap = document.querySelector(".arcade-wrap");
+
+  function openArcadeFullscreen() {
+    fsStage.appendChild(runnerCanvas); // moving the canvas keeps its 2d context
+    fsOverlay.classList.remove("hidden");
+    document.body.classList.add("fs-lock");
+    if (fsOverlay.requestFullscreen) fsOverlay.requestFullscreen().catch(() => {});
+    if (window.Arcade) {
+      window.Arcade.setActive(true);
+      window.Arcade.play();
+    }
+  }
+
+  function closeArcadeFullscreen() {
+    if (fsOverlay.classList.contains("hidden")) return;
+    fsOverlay.classList.add("hidden");
+    document.body.classList.remove("fs-lock");
+    arcadeWrap.appendChild(runnerCanvas);
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    if (window.Arcade) window.Arcade.setActive(currentScreen === "arcade");
+  }
+
+  document.getElementById("arcade-fs-close").addEventListener("click", closeArcadeFullscreen);
+  document.getElementById("arcade-fs-btn").addEventListener("click", openArcadeFullscreen);
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) closeArcadeFullscreen();
+  });
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeArcadeFullscreen();
+  });
+
+  // Character-screen CTA: the avatar takes a hop, then the arcade opens
+  document.getElementById("play-arcade-cta").addEventListener("click", () => {
+    const avatar = document.getElementById("char-avatar");
+    avatar.classList.remove("avatar-jump");
+    void avatar.offsetWidth; // restart the animation if clicked again
+    avatar.classList.add("avatar-jump");
+    setTimeout(() => {
+      avatar.classList.remove("avatar-jump");
+      openArcadeFullscreen();
+    }, 640);
   });
 
   // ---------- Character ----------

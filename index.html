@@ -69,6 +69,7 @@
               <h3 class="char-name" id="char-name"></h3>
               <p class="char-class">CLASS: <span id="typewriter"></span><span class="cursor">▌</span></p>
               <div class="char-badges" id="char-badges"></div>
+              <button class="play-cta" id="play-arcade-cta">🕹️ PLAY BUG RUNNER</button>
             </div>
             <div class="char-right">
               <div class="panel bio-panel">
@@ -128,6 +129,7 @@
           </div>
           <div class="arcade-foot">
             <span class="arcade-keys">SPACE / ↑ JUMP · ↓ DUCK · TAP ON MOBILE</span>
+            <button class="hud-btn" id="arcade-fs-btn">⛶ FULLSCREEN</button>
             <span class="arcade-tip">🪙 coins collected here go to your wallet</span>
           </div>
         </section>
@@ -152,6 +154,16 @@
       <span id="footer-note"></span>
       <span class="footer-keys">⌨️ 1–7 switch screens · ↑↑↓↓←→←→BA …try it</span>
     </footer>
+  </div>
+
+  <!-- Fullscreen arcade overlay -->
+  <div class="arcade-fs hidden" id="arcade-fs">
+    <div class="arcade-fs-bar">
+      <span>🕹️ BUG RUNNER</span>
+      <span class="arcade-fs-keys">SPACE / ↑ JUMP · ↓ DUCK · TAP</span>
+      <button class="hud-btn" id="arcade-fs-close">✕ EXIT</button>
+    </div>
+    <div class="arcade-fs-stage" id="arcade-fs-stage"></div>
   </div>
 
   <!-- Toasts -->
