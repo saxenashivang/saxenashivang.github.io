@@ -79,6 +79,11 @@
       [523, 659, 784, 1047, 1319].forEach((f, i) =>
         tone({ from: f, t0: i * 0.07, dur: 0.1, vol: 0.06 }));
     },
+    // mwah: rising squeak + lip pop
+    kiss() {
+      tone({ type: "sine", from: 300, to: 1000, dur: 0.09, vol: 0.09 });
+      tone({ type: "triangle", from: 500, to: 80, t0: 0.1, dur: 0.05, vol: 0.14 });
+    },
 
     // ---------- Gameplay ----------
     jump() { tone({ from: 160, to: 480, dur: 0.12, vol: 0.08 }); },

@@ -189,6 +189,57 @@
     if (e.key === "Escape") closeArcadeFullscreen();
   });
 
+  // ---------- Avatar emotes: tap the hero, get love ----------
+  const EMOTES = [
+    { text: "HI THERE! 👋", anim: "emote-wave", sound: "toast", parts: ["👋"] },
+    { text: "MWAH! 😘", anim: "emote-kiss", sound: "kiss", parts: ["💋", "❤️", "💕"] },
+    { text: "BIG HUG! 🤗", anim: "emote-hug", sound: "chill", parts: ["🤗", "💛"] },
+    { text: "NAMASTE 🙏", anim: "emote-bow", sound: "ding", parts: ["🙏", "✨"] },
+    { text: "GYM? MONDAY. 💪", anim: "emote-flex", sound: "powerup", parts: ["💪", "🔥"] },
+    { text: "HIGH FIVE! ✋", anim: "emote-wave", sound: "coin", parts: ["✋", "⭐"] },
+  ];
+  let emoteIdx = 0;
+  let bubbleTimer = null;
+  const emoteAvatar = document.getElementById("char-avatar");
+  const charCard = emoteAvatar.closest(".char-card");
+
+  emoteAvatar.style.cursor = "pointer";
+  emoteAvatar.title = "tap me!";
+  emoteAvatar.addEventListener("click", () => {
+    const emote = EMOTES[emoteIdx % EMOTES.length];
+    emoteIdx++;
+    sfx(emote.sound);
+
+    EMOTES.forEach((e) => emoteAvatar.classList.remove(e.anim));
+    void emoteAvatar.offsetWidth; // restart animation on rapid taps
+    emoteAvatar.classList.add(emote.anim);
+
+    // floating emoji burst
+    for (let i = 0; i < 5; i++) {
+      const part = el("span", "emote-pop", emote.parts[i % emote.parts.length]);
+      part.style.left = 32 + Math.random() * 36 + "%";
+      part.style.top = 50 + Math.random() * 70 + "px";
+      part.style.setProperty("--dx", (Math.random() * 70 - 35).toFixed(0) + "px");
+      part.style.setProperty("--rot", (Math.random() * 50 - 25).toFixed(0) + "deg");
+      part.style.animationDelay = i * 0.06 + "s";
+      charCard.appendChild(part);
+      setTimeout(() => part.remove(), 1500);
+    }
+
+    // speech bubble
+    let bubble = charCard.querySelector(".emote-bubble");
+    if (!bubble) {
+      bubble = el("div", "emote-bubble");
+      charCard.appendChild(bubble);
+    }
+    bubble.textContent = emote.text;
+    bubble.classList.remove("show");
+    void bubble.offsetWidth;
+    bubble.classList.add("show");
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(() => bubble.classList.remove("show"), 1500);
+  });
+
   // Character-screen CTA: the avatar takes a hop, then the arcade opens
   document.getElementById("play-arcade-cta").addEventListener("click", () => {
     const avatar = document.getElementById("char-avatar");

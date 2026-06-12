@@ -374,7 +374,52 @@ body.godmode { animation: god 6s linear infinite; }
   align-items: start;
 }
 
-.char-card { text-align: center; }
+.char-card { text-align: center; position: relative; }
+
+/* ---------- Avatar emotes (tap the hero) ---------- */
+@keyframes emoteWave { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-14deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-10deg); } 80% { transform: rotate(8deg); } }
+@keyframes emoteKiss { 0%, 100% { transform: none; } 30% { transform: rotate(9deg) scale(1.1); } 60% { transform: rotate(6deg) scale(1.04); } }
+@keyframes emoteHug { 0%, 100% { transform: none; } 30% { transform: scale(1.2, 0.82); } 60% { transform: scale(0.92, 1.1); } 80% { transform: scale(1.05, 0.97); } }
+@keyframes emoteBow { 0%, 100% { transform: none; } 40% { transform: translateY(8px) rotate(16deg); } 70% { transform: translateY(4px) rotate(10deg); } }
+@keyframes emoteFlex { 0%, 100% { transform: none; } 25% { transform: scale(1.16) rotate(-4deg); } 50% { transform: scale(1.16) rotate(4deg); } 75% { transform: scale(1.16) rotate(-3deg); } }
+
+.emote-wave { animation: emoteWave 0.7s ease; }
+.emote-kiss { animation: emoteKiss 0.7s ease; }
+.emote-hug { animation: emoteHug 0.75s ease; }
+.emote-bow { animation: emoteBow 0.8s ease; }
+.emote-flex { animation: emoteFlex 0.7s ease; }
+
+.emote-pop {
+  position: absolute;
+  z-index: 3;
+  font-size: 1.5rem;
+  pointer-events: none;
+  animation: emoteFloat 1.2s ease-out forwards;
+}
+
+@keyframes emoteFloat {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx, 0), -90px) scale(1.35) rotate(var(--rot, 0deg)); }
+}
+
+.emote-bubble {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: var(--yellow);
+  color: var(--bg);
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  padding: 10px 14px;
+  clip-path: var(--cut);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 4;
+  white-space: nowrap;
+}
+
+.emote-bubble.show { transform: translateX(-50%) scale(1); }
 
 .char-avatar {
   width: 120px; height: 120px;
