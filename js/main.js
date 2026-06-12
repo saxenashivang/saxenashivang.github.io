@@ -214,12 +214,13 @@
     void emoteAvatar.offsetWidth; // restart animation on rapid taps
     emoteAvatar.classList.add(emote.anim);
 
-    // floating emoji burst
-    for (let i = 0; i < 5; i++) {
+    // floating emoji burst, along the sides of the card so the
+    // panel's clip-path never cuts them off
+    for (let i = 0; i < 6; i++) {
       const part = el("span", "emote-pop", emote.parts[i % emote.parts.length]);
-      part.style.left = 32 + Math.random() * 36 + "%";
-      part.style.top = 50 + Math.random() * 70 + "px";
-      part.style.setProperty("--dx", (Math.random() * 70 - 35).toFixed(0) + "px");
+      part.style[i % 2 ? "left" : "right"] = 5 + Math.random() * 14 + "%";
+      part.style.top = 95 + Math.random() * 60 + "px";
+      part.style.setProperty("--dx", (Math.random() * 40 - 20).toFixed(0) + "px");
       part.style.setProperty("--rot", (Math.random() * 50 - 25).toFixed(0) + "deg");
       part.style.animationDelay = i * 0.06 + "s";
       charCard.appendChild(part);

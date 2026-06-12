@@ -405,21 +405,25 @@ body.godmode { animation: god 6s linear infinite; }
 
 .emote-bubble {
   position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%) scale(0);
+  top: 34px;
+  right: 10px;
   background: var(--yellow);
   color: var(--bg);
   font-family: var(--font-pixel);
   font-size: 0.55rem;
   padding: 10px 14px;
   clip-path: var(--cut);
+  transform: scale(0);
+  transform-origin: 100% 50%;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 4;
   white-space: nowrap;
+  max-width: 46%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.emote-bubble.show { transform: translateX(-50%) scale(1); }
+.emote-bubble.show { transform: scale(1); }
 
 .char-avatar {
   width: 120px; height: 120px;
