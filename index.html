@@ -54,7 +54,8 @@
         <button class="menu-btn" data-screen="achievements"><i>04</i><span>TROPHIES</span></button>
         <button class="menu-btn" data-screen="sidequests"><i>05</i><span>SIDE QUESTS</span></button>
         <button class="menu-btn" data-screen="codex"><i>06</i><span>CODEX</span></button>
-        <button class="menu-btn" data-screen="tavern"><i>07</i><span>TAVERN</span></button>
+        <button class="menu-btn" data-screen="arcade"><i>07</i><span>ARCADE</span></button>
+        <button class="menu-btn" data-screen="tavern"><i>08</i><span>TAVERN</span></button>
       </nav>
 
       <!-- SCREENS -->
@@ -118,6 +119,19 @@
           <div class="codex-list" id="codex-list"></div>
         </section>
 
+        <!-- ARCADE -->
+        <section class="screen" id="screen-arcade">
+          <h2 class="screen-title">ARCADE</h2>
+          <p class="screen-sub" id="arcade-sub">BUG RUNNER · dodge the bugs, leap the merge conflicts, duck the prod alerts</p>
+          <div class="arcade-wrap">
+            <canvas id="runner-canvas" width="800" height="240"></canvas>
+          </div>
+          <div class="arcade-foot">
+            <span class="arcade-keys">SPACE / ↑ JUMP · ↓ DUCK · TAP ON MOBILE</span>
+            <span class="arcade-tip">🪙 coins collected here go to your wallet</span>
+          </div>
+        </section>
+
         <!-- TAVERN -->
         <section class="screen" id="screen-tavern">
           <h2 class="screen-title">TAVERN</h2>
@@ -145,5 +159,6 @@
 
   <script src="config.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/game.js"></script>
 </body>
 </html>

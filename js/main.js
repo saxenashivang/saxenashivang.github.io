@@ -67,16 +67,22 @@
   document.getElementById("hud-player").textContent = CONFIG.name.toUpperCase();
   document.getElementById("hud-level").textContent = "LV." + level;
 
-  // Coins: every click earns one. Persisted, because economy.
+  // Coins: every click earns one; the arcade pays out too. Persisted, because economy.
   const coinEl = document.getElementById("coin-count");
   let coins = parseInt(localStorage.getItem("coins") || "0", 10);
   coinEl.textContent = coins;
-  document.addEventListener("click", () => {
-    coins += 1;
+
+  function addCoins(n) {
+    coins += n;
     coinEl.textContent = coins;
     localStorage.setItem("coins", String(coins));
-    if (coins === 50) toast("🪙", "ACHIEVEMENT UNLOCKED", "Click economist — 50 coins collected");
-  });
+    if (coins >= 50 && coins - n < 50) toast("🪙", "ACHIEVEMENT UNLOCKED", "Coin economist — 50 coins collected");
+  }
+
+  document.addEventListener("click", () => addCoins(1));
+
+  // Shared HUD API for the arcade mini-game (js/game.js)
+  window.HUD = { addCoins, toast };
 
   // CRT toggle
   const crtBtn = document.getElementById("crt-toggle");
@@ -100,6 +106,7 @@
     achievements: "Trophy Room",
     sidequests: "Side Quests",
     codex: "Codex",
+    arcade: "Arcade",
     tavern: "Tavern",
   };
 
@@ -110,6 +117,7 @@
       visited.add(id);
       toast("🗺️", "AREA DISCOVERED", SCREEN_NAMES[id]);
     }
+    if (window.Arcade) window.Arcade.setActive(id === "arcade");
   }
 
   menuBtns.forEach((btn) => btn.addEventListener("click", () => showScreen(btn.dataset.screen)));
@@ -326,6 +334,12 @@
 
   document.getElementById("footer-note").textContent =
     "© " + new Date().getFullYear() + " " + CONFIG.name + " · " + (CONFIG.footerNote || "");
+
+  const arcadeSub = document.getElementById("arcade-sub");
+  if (arcadeSub) {
+    arcadeSub.textContent =
+      "BUG RUNNER · help " + CONFIG.firstName + " dodge bugs, leap merge conflicts, and duck prod alerts";
+  }
 
   // ---------- Toasts ----------
   const toastZone = document.getElementById("toast-zone");

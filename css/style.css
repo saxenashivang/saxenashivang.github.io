@@ -712,6 +712,42 @@ body.godmode { animation: god 6s linear infinite; }
 
 .codex-read { font-family: var(--font-pixel); font-size: 0.5rem; color: var(--pink); }
 
+/* ---------- ARCADE ---------- */
+.arcade-wrap {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  clip-path: var(--cut);
+  padding: 10px;
+}
+
+#runner-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.arcade-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.arcade-keys {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+}
+
+.arcade-tip {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 /* ---------- TAVERN ---------- */
 .tavern { text-align: center; padding: 40px 28px; }
 
