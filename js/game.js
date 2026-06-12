@@ -77,12 +77,15 @@
   }));
   reset();
 
+  const sfx = (name) => window.SFX && window.SFX.play(name);
+
   // ---------- Input ----------
   function jump() {
     if (state !== "running") return start();
     if (player.y >= GROUND) {
       player.vy = -11;
       player.ducking = false;
+      sfx("jump");
     }
   }
 
@@ -90,6 +93,7 @@
     if (state === "running") return;
     reset();
     state = "running";
+    sfx("powerup");
   }
 
   function onKey(e) {
@@ -97,7 +101,10 @@
     if (["ArrowUp", "ArrowDown", " ", "Spacebar"].includes(e.key)) e.preventDefault();
     if (e.type === "keydown") {
       if (e.key === " " || e.key === "Spacebar" || e.key === "ArrowUp") jump();
-      if (e.key === "ArrowDown" && state === "running") player.ducking = true;
+      if (e.key === "ArrowDown" && state === "running") {
+        if (!player.ducking) sfx("duck");
+        player.ducking = true;
+      }
     } else if (e.key === "ArrowDown") {
       player.ducking = false;
     }
@@ -158,6 +165,9 @@
         sub: d.tag,
         timer: 150,
       };
+      // each day deserves its own jingle
+      const DAY_SOUNDS = { MON: "alarm", FRI: "siren", SAT: "party", SUN: "chill" };
+      sfx(DAY_SOUNDS[d.key] || "ding");
       if (d.weekend && !weekendToastShown && window.HUD) {
         weekendToastShown = true;
         localStorage.setItem("runner-weekend", "1");
@@ -212,6 +222,7 @@
       if (dx * dx + dy * dy < (c.r + 16) * (c.r + 16)) {
         c.taken = true;
         score += 25;
+        sfx("coin");
         if (window.HUD) window.HUD.addCoins(1);
       }
     }
@@ -221,12 +232,14 @@
       if (dx * dx + dy * dy < 28 * 28) {
         b.taken = true;
         score += 40;
+        sfx("pop");
       }
     }
   }
 
   function gameOver() {
     state = "over";
+    sfx("trombone"); // womp womp womp wooomp
     if (score > hi) {
       hi = score;
       localStorage.setItem("runner-hi", String(hi));

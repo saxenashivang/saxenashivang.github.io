@@ -40,9 +40,12 @@
   const gameEl = document.getElementById("game");
   let started = false;
 
+  const sfx = (name) => window.SFX && window.SFX.play(name);
+
   function startGame() {
     if (started) return;
     started = true;
+    sfx("powerup");
     boot.classList.add("exit");
     gameEl.classList.remove("hidden");
     setTimeout(() => boot.remove(), 550);
@@ -94,6 +97,23 @@
     const on = document.body.classList.toggle("crt");
     crtBtn.classList.toggle("on", on);
     localStorage.setItem("crt", on ? "1" : "0");
+    sfx("blip");
+  });
+
+  // Sound toggle
+  const soundBtn = document.getElementById("sound-toggle");
+  function renderSoundBtn() {
+    const muted = window.SFX ? window.SFX.muted : true;
+    soundBtn.textContent = muted ? "🔇" : "🔊";
+    soundBtn.classList.toggle("on", !muted);
+  }
+  renderSoundBtn();
+  soundBtn.addEventListener("click", () => {
+    if (window.SFX) {
+      const muted = window.SFX.toggle();
+      if (!muted) sfx("coin"); // a little "you're back" ding
+    }
+    renderSoundBtn();
   });
 
   // ---------- Screen router ----------
@@ -122,7 +142,10 @@
     if (window.Arcade) window.Arcade.setActive(id === "arcade");
   }
 
-  menuBtns.forEach((btn) => btn.addEventListener("click", () => showScreen(btn.dataset.screen)));
+  menuBtns.forEach((btn) => btn.addEventListener("click", () => {
+    sfx("blip");
+    showScreen(btn.dataset.screen);
+  }));
 
   window.addEventListener("keydown", (e) => {
     if (!started || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -169,6 +192,7 @@
   // Character-screen CTA: the avatar takes a hop, then the arcade opens
   document.getElementById("play-arcade-cta").addEventListener("click", () => {
     const avatar = document.getElementById("char-avatar");
+    sfx("jump");
     avatar.classList.remove("avatar-jump");
     void avatar.offsetWidth; // restart the animation if clicked again
     avatar.classList.add("avatar-jump");
@@ -394,6 +418,7 @@
   // ---------- Toasts ----------
   const toastZone = document.getElementById("toast-zone");
   function toast(emoji, title, text) {
+    sfx("toast");
     const node = el("div", "toast",
       '<span class="toast-emoji">' + emoji + "</span>" +
       "<div><b>" + esc(title) + "</b><span>" + esc(text) + "</span></div>"
@@ -410,6 +435,7 @@
     if (konamiIdx === KONAMI.length) {
       konamiIdx = 0;
       const on = document.body.classList.toggle("godmode");
+      sfx("god");
       toast("🌈", on ? "GOD MODE ACTIVATED" : "GOD MODE DEACTIVATED", on ? "30 lives granted. Use them wisely." : "Back to mortal rendering.");
     }
   });
