@@ -388,7 +388,7 @@
   const arcadeSub = document.getElementById("arcade-sub");
   if (arcadeSub) {
     arcadeSub.textContent =
-      "BUG RUNNER · help " + CONFIG.firstName + " dodge bugs, leap merge conflicts, and duck prod alerts";
+      "BUG RUNNER · survive " + CONFIG.firstName + "'s Mon–Fri grind — then it's bottles & vibes all weekend";
   }
 
   // ---------- Toasts ----------

@@ -18,23 +18,56 @@
     text: "#e8e8f0", muted: "#9b9bb2",
   };
 
+  // ---------- The work-week cycle ----------
+  // Mon-Fri: obstacles (the grind). Sat-Sun: no obstacles, booze bottles.
+  const DAY_LEN = 3200; // distance units per in-game day
+  const DAYS = [
+    { key: "MON", label: "MONDAY", tag: "😮‍💨 BACK TO THE GRIND", sky1: "#10131f", sky2: "#1a2233", ground: "#5c6bc0", spawnMul: 1 },
+    { key: "TUE", label: "TUESDAY", tag: "⚙️ SHIPPING MODE", sky1: "#141022", sky2: "#1d1230", ground: "#8b5cf6", spawnMul: 1.05 },
+    { key: "WED", label: "WEDNESDAY", tag: "🐪 HUMP DAY", sky1: "#0e1a1c", sky2: "#12262a", ground: "#06b6d4", spawnMul: 1.1 },
+    { key: "THU", label: "THURSDAY", tag: "☕ ALMOST THERE", sky1: "#1a1410", sky2: "#27190f", ground: "#f59e0b", spawnMul: 1.15 },
+    { key: "FRI", label: "DEPLOY FRIDAY", tag: "🚨 HOLD THE LINE", sky1: "#1d0f1a", sky2: "#2b1024", ground: "#ff2e88", spawnMul: 1.4 },
+    { key: "SAT", label: "SATURDAY", tag: "🍾 NO BUGS · JUST BOOZE", sky1: "#190f24", sky2: "#2d1140", ground: "#fbbf24", weekend: true },
+    { key: "SUN", label: "SUNDAY", tag: "🛋️ RECHARGE", sky1: "#1c1212", sky2: "#2e1a16", ground: "#fb7185", weekend: true },
+  ];
+
+  function hexToRgb(h) {
+    return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  }
+  function mix(a, b, t) { return a.map((v, i) => v + (b[i] - v) * t); }
+  function css(c, alpha) {
+    const r = c[0] | 0, g = c[1] | 0, bl = c[2] | 0;
+    return alpha === undefined ? "rgb(" + r + "," + g + "," + bl + ")" : "rgba(" + r + "," + g + "," + bl + "," + alpha + ")";
+  }
+
   let raf = null;          // animation frame handle (null = loop stopped)
   let state = "idle";      // idle | running | over
   let frames = 0, speed = 0, score = 0, distance = 0;
-  let player, obstacles, coins, spawnIn, coinIn, stars;
+  let player, obstacles, coins, bottles, spawnIn, coinIn, stars;
+  let dayIdx = 0, dayDist = 0, totalDays = 0, banner = null, god = false;
+  let theme = { sky1: hexToRgb(DAYS[0].sky1), sky2: hexToRgb(DAYS[0].sky2), ground: hexToRgb(DAYS[0].ground) };
   let hi = parseInt(localStorage.getItem("runner-hi") || "0", 10);
   let firstGameOver = !localStorage.getItem("runner-played");
+  let weekendToastShown = !!localStorage.getItem("runner-weekend");
+
+  function week() { return Math.floor(totalDays / 7) + 1; }
 
   function reset() {
     player = { x: 80, y: GROUND, vy: 0, ducking: false };
     obstacles = [];
     coins = [];
+    bottles = [];
     frames = 0;
     speed = 6;
     score = 0;
     distance = 0;
     spawnIn = 70;
     coinIn = 150;
+    dayIdx = 0;
+    dayDist = 0;
+    totalDays = 0;
+    banner = { title: DAYS[0].label, sub: DAYS[0].tag, timer: 150 };
+    theme = { sky1: hexToRgb(DAYS[0].sky1), sky2: hexToRgb(DAYS[0].sky2), ground: hexToRgb(DAYS[0].ground) };
   }
 
   stars = Array.from({ length: 40 }, (_, i) => ({
@@ -98,22 +131,55 @@
     }
   }
 
+  function spawnBottles() {
+    const n = 2 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < n; i++) {
+      bottles.push({ x: W + 30 + i * 46, y: GROUND - 14 - Math.random() * 70, taken: false });
+    }
+  }
+
   // ---------- Update ----------
   function update() {
     frames++;
     speed = Math.min(13, speed + 0.0016);
     distance += speed;
     score = Math.floor(distance / 8);
+    if (banner && banner.timer > 0) banner.timer--;
+
+    // day/night-shift cycle: another day at the office (or off it)
+    dayDist += speed;
+    if (dayDist >= DAY_LEN) {
+      dayDist -= DAY_LEN;
+      dayIdx = (dayIdx + 1) % 7;
+      totalDays++;
+      const d = DAYS[dayIdx];
+      banner = {
+        title: dayIdx === 0 ? "WEEK " + week() + " · " + d.label : d.label,
+        sub: d.tag,
+        timer: 150,
+      };
+      if (d.weekend && !weekendToastShown && window.HUD) {
+        weekendToastShown = true;
+        localStorage.setItem("runner-weekend", "1");
+        window.HUD.toast("🍾", "ACHIEVEMENT UNLOCKED", "Made it to the weekend");
+      }
+    }
+    const day = DAYS[dayIdx];
 
     // player physics
     player.vy += 0.6;
     player.y = Math.min(GROUND, player.y + player.vy);
     if (player.y === GROUND) player.vy = 0;
 
-    // spawns
+    // spawns: weekdays bring obstacles, weekends bring bottles
     if (--spawnIn <= 0) {
-      spawnObstacle();
-      spawnIn = 60 + Math.random() * 70 - speed * 2;
+      if (day.weekend) {
+        spawnBottles();
+        spawnIn = 55 + Math.random() * 60;
+      } else {
+        spawnObstacle();
+        spawnIn = (60 + Math.random() * 70 - speed * 2) / (day.spawnMul || 1);
+      }
     }
     if (--coinIn <= 0) {
       spawnCoins();
@@ -122,8 +188,10 @@
 
     obstacles.forEach((o) => { o.x -= speed; });
     coins.forEach((c) => { c.x -= speed; });
+    bottles.forEach((b) => { b.x -= speed; });
     obstacles = obstacles.filter((o) => o.x > -60);
     coins = coins.filter((c) => c.x > -20 && !c.taken);
+    bottles = bottles.filter((b) => b.x > -20 && !b.taken);
 
     // player hitbox (forgiving margins)
     const ph = player.ducking ? 26 : 46;
@@ -132,7 +200,8 @@
     for (const o of obstacles) {
       const oy = o.type === "alert" ? o.y + Math.sin(frames / 8 + o.wob) * 4 : o.y;
       const obox = { x: o.x - o.w / 2 + 3, y: oy - o.h + 3, w: o.w - 6, h: o.h - 5 };
-      if (pbox.x < obox.x + obox.w && pbox.x + pbox.w > obox.x &&
+      if (!god &&
+          pbox.x < obox.x + obox.w && pbox.x + pbox.w > obox.x &&
           pbox.y < obox.y + obox.h && pbox.y + pbox.h > obox.y) {
         return gameOver();
       }
@@ -144,6 +213,14 @@
         c.taken = true;
         score += 25;
         if (window.HUD) window.HUD.addCoins(1);
+      }
+    }
+
+    for (const b of bottles) {
+      const dx = b.x - player.x, dy = (b.y - 20) - (player.y - ph / 2);
+      if (dx * dx + dy * dy < 28 * 28) {
+        b.taken = true;
+        score += 40;
       }
     }
   }
@@ -163,9 +240,15 @@
 
   // ---------- Drawing ----------
   function drawBackground() {
+    // ease the palette toward the current day's theme
+    const d = DAYS[dayIdx];
+    theme.sky1 = mix(theme.sky1, hexToRgb(d.sky1), 0.04);
+    theme.sky2 = mix(theme.sky2, hexToRgb(d.sky2), 0.04);
+    theme.ground = mix(theme.ground, hexToRgb(d.ground), 0.04);
+
     const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, COLORS.bg1);
-    grad.addColorStop(1, COLORS.bg2);
+    grad.addColorStop(0, css(theme.sky1));
+    grad.addColorStop(1, css(theme.sky2));
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
@@ -176,7 +259,7 @@
     }
 
     // scrolling floor grid
-    ctx.strokeStyle = COLORS.grid;
+    ctx.strokeStyle = css(theme.ground, 0.28);
     ctx.lineWidth = 1;
     const off = distance % 40;
     for (let x = -off; x < W; x += 40) {
@@ -185,7 +268,7 @@
       ctx.lineTo(x - 14, H);
       ctx.stroke();
     }
-    ctx.strokeStyle = COLORS.ground;
+    ctx.strokeStyle = css(theme.ground);
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(0, GROUND + 2);
@@ -347,13 +430,51 @@
     ctx.restore();
   }
 
+  function drawBottle(b) {
+    ctx.save();
+    ctx.translate(b.x, b.y + Math.sin(frames / 12 + b.x / 50) * 3);
+    ctx.fillStyle = "#1d6b3a";
+    roundRect(-7, -26, 14, 26, 4);          // body
+    ctx.fillRect(-2.5, -38, 5, 13);          // neck
+    ctx.fillStyle = COLORS.gold;
+    ctx.fillRect(-3.5, -43, 7, 6);           // foil cap
+    ctx.fillStyle = "#f6e9c9";
+    ctx.fillRect(-5, -18, 10, 8);            // label
+    ctx.restore();
+  }
+
   function drawHud() {
+    const day = DAYS[dayIdx];
     ctx.fillStyle = COLORS.text;
     ctx.font = "10px 'Press Start 2P', monospace";
     ctx.textAlign = "right";
     ctx.fillText(String(score).padStart(5, "0"), W - 16, 26);
     ctx.fillStyle = COLORS.muted;
     ctx.fillText("HI " + String(hi).padStart(5, "0"), W - 16, 44);
+    // current day, weekend gets the golden treatment
+    ctx.textAlign = "left";
+    ctx.fillStyle = day.weekend ? COLORS.gold : COLORS.muted;
+    ctx.fillText("WK" + week() + " · " + day.key + (day.weekend ? " 🍾" : ""), 16, 26);
+    // progress through the day
+    ctx.fillStyle = "rgba(255,255,255,0.12)";
+    ctx.fillRect(16, 34, 70, 4);
+    ctx.fillStyle = day.weekend ? COLORS.gold : COLORS.cyan;
+    ctx.fillRect(16, 34, 70 * (dayDist / DAY_LEN), 4);
+  }
+
+  function drawBanner() {
+    if (!banner || banner.timer <= 0) return;
+    const alpha = Math.min(1, banner.timer / 40);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.textAlign = "center";
+    ctx.fillStyle = COLORS.yellow;
+    ctx.font = "17px 'Press Start 2P', monospace";
+    ctx.fillText(banner.title, W / 2, 88);
+    ctx.fillStyle = COLORS.text;
+    ctx.font = "9px 'Press Start 2P', monospace";
+    ctx.fillText(banner.sub, W / 2, 112);
+    ctx.restore();
   }
 
   function drawCenterText(big, small) {
@@ -382,8 +503,10 @@
     drawBackground();
     obstacles.forEach(drawObstacle);
     coins.forEach(drawCoin);
+    bottles.forEach(drawBottle);
     drawPlayer();
     drawHud();
+    if (state === "running") drawBanner();
 
     if (state === "idle") drawCenterText("BUG RUNNER", "PRESS SPACE OR TAP TO START");
     if (state === "over") drawCenterText("GAME OVER", "SCORE " + score + " · SPACE / TAP TO RETRY");
@@ -415,6 +538,8 @@
     // test/debug helpers
     state: () => state,
     score: () => score,
+    day: () => "WK" + week() + " " + DAYS[dayIdx].key,
+    _god(on) { god = !!on; },
     _step(n) { for (let i = 0; i < n && state === "running"; i++) update(); },
   };
 })();
